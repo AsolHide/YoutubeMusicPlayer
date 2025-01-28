@@ -4,9 +4,17 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
+import 'package:flutter/services.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    // 縦向き
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -35,6 +43,7 @@ class MyApp extends StatelessWidget {
         '/':(context)=>InitPage(title: 'YoutubeMusicPlayer'),
         '/Player':(context)=>VideoPlayerScreen(),
         '/Help':(context)=>Help(title: 'ヘルプ',),
+        '/Help/HowtoUse':(context)=>HowtoUse(title: 'アプリの使い方',),
       },
     );
   }
@@ -149,9 +158,9 @@ class InitPageState extends State<InitPage> {
           children: [
             SizedBox(height: 20,),
             Mywidget.NormalBUtton(size.width,"音楽リスト選択",pickFile,true),
-            SizedBox(height: 40,),
+            SizedBox(height: 20,),
             Text("＜読み込まれたリスト＞\n$fileName",textAlign: TextAlign.center,),
-            SizedBox(height: 40,),
+            SizedBox(height: 20,),
             Mywidget.NormalBUtton(size.width,"再生",(){Navigator.pushNamed(context, '/Player',arguments: urlList);},_playbutton),
           ],
         ),
@@ -281,7 +290,37 @@ class HelpState extends State<Help> {
           mainAxisAlignment:MainAxisAlignment.start,
           children: [
             SizedBox(height: 20,),
-            Mywidget.NormalBUtton(size.width, "アプリの使い方", (){debugPrint("Hi");}, true),
+            Mywidget.NormalBUtton(size.width, "アプリの使い方", (){Navigator.pushNamed(context, '/Help/HowtoUse');}, true),
+
+          ],),
+      ),
+    );
+  }
+}
+
+class HowtoUse extends StatefulWidget {
+  const HowtoUse({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<HowtoUse> createState() => HowtoUseState();
+}
+
+class HowtoUseState extends State<HowtoUse> {
+@override
+  Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: MyColor.secondary,
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment:MainAxisAlignment.start,
+          children: [
 
           ],),
       ),
