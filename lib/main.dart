@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       initialRoute: '/',
       routes: {
-        '/':(context)=>InitPage(title: 'YoutubeMusicPlayer'),
+        '/':(context)=>InitPage(title: 'MyPlayer'),
         '/Player':(context)=>VideoPlayerScreen(),
         '/Help':(context)=>Help(title: 'ヘルプ',),
         '/Help/HowtoUse':(context)=>HowtoUse(title: 'アプリの使い方',),

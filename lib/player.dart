@@ -103,7 +103,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
             ignoring: true,
             child: YoutubePlayer(
               controller: _controller,
-              
               aspectRatio: 16 / 9,
             ),
           )
