@@ -62,7 +62,8 @@ class InitPage extends StatefulWidget {
 class InitPageState extends State<InitPage> {
   List<List<dynamic>> PlayList=[];
 
-  bool _playbutton=false;
+  //bool _playbutton=false;
+  bool _playbutton=true;
 
   String? fileName="未選択";
   Map<String, List<List<dynamic>>> excelData = {};

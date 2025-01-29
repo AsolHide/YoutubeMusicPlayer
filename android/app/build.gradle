@@ -7,6 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.test"
+    testNamespace = "com.example.mytestapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -37,6 +38,7 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+    
 }
 
 flutter {

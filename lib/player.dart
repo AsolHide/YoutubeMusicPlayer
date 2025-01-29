@@ -32,6 +32,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     // リストをシャッフル
     newPlaylist.shuffle(random);
 
+    newPlaylist=[
+      ["vg2cGSPb-mw",30.0],
+      ["8lx0vLTH_yg",30.0]
+    ];
+
     return newPlaylist;
   } 
 
@@ -64,8 +69,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     super.initState();
     _controller = YoutubePlayerController(
       params: const YoutubePlayerParams(
-        showControls: true, // コントロール表示
-        showFullscreenButton: true, // フルスクリーンボタンを表示
+        showControls: false, // コントロール表示
+        showFullscreenButton: false, // フルスクリーンボタンを表示
+        showVideoAnnotations: false,
+        mute: false,
         //loop: true, // 動画をループ
       ),
     );
@@ -91,10 +98,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         title: Text('$title'),
       ),
       body: Center(
-        child: YoutubePlayer(
-          controller: _controller,
-          aspectRatio: 16 / 9,
-        ),
+        child: Column(children: [
+          IgnorePointer(
+            ignoring: true,
+            child: YoutubePlayer(
+              controller: _controller,
+              
+              aspectRatio: 16 / 9,
+            ),
+          )
+        ],)
       ),
     );
   }
