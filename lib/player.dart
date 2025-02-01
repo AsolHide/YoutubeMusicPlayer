@@ -32,23 +32,18 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     // リストをシャッフル
     newPlaylist.shuffle(random);
 
-    newPlaylist=[
-      ["vg2cGSPb-mw",30.0],
-      ["8lx0vLTH_yg",30.0]
-    ];
-
     return newPlaylist;
   } 
 
   void _listener(YoutubePlayerValue) async {
     double time= await _controller.currentTime;
-    if (time>PlayList_shuffled[count][1]){
+    if (time>=PlayList_shuffled[count][1]){
       count++;
       if (PlayList_shuffled.length>count){
         Play();
       }else{
         count=0;
-        PlayList_shuffled = shufflePlaylistWithRandomValues(PlayList);
+        //PlayList_shuffled = shufflePlaylistWithRandomValues(PlayList);
         Play();
       }
       
