@@ -16,34 +16,44 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   late YoutubePlayerController _controller;
 
-  List<List<dynamic>> PlayList=[];
-  List<List<dynamic>> PlayList_shuffled=[];
-  int count=0;
+  Map<String, List<List<dynamic>>> PlayList={};
+  List<List<dynamic>> urlList=[];
+  List<List<dynamic>> urlList_shuffled=[];
+  String sheet_name="";
+  int music_count=0;
+  int sheet_count=0;
 
-  List<List<dynamic>> shufflePlaylistWithRandomValues(List<List<dynamic>> playlist) {
+  List<List<dynamic>> shufflePlaylistWithRandomValues(List<List<dynamic>> urllist) {
     var random = Random();
 
+    debugPrint("$urllist");
     // 各要素についてランダムな値を生成
-    List<List<dynamic>> newPlaylist = playlist.map((item) {
+    List<List<dynamic>> newurllist = urllist.map((item) {
       double randomValue = random.nextDouble() * (item[2].value - item[1].value) + item[1].value; // item[1] と item[2] の間のランダムな値
       return [item[0], randomValue];
     }).toList();
 
     // リストをシャッフル
-    newPlaylist.shuffle(random);
+    newurllist.shuffle(random);
 
-    return newPlaylist;
+    return newurllist;
   } 
 
   void _listener(YoutubePlayerValue) async {
     double time= await _controller.currentTime;
-    if (time>=PlayList_shuffled[count][1]){
-      count++;
-      if (PlayList_shuffled.length>count){
+    if (time>=urlList_shuffled[music_count][1]){
+      music_count++;
+      if (urlList_shuffled.length>music_count){
         Play();
       }else{
-        count=0;
-        //PlayList_shuffled = shufflePlaylistWithRandomValues(PlayList);
+        music_count=0;
+        sheet_count++;
+        if (sheet_count>=PlayList.keys.length){
+          sheet_count=0;
+        }
+        sheet_name=PlayList.keys.elementAt(sheet_count);
+        urlList = PlayList[sheet_name]!;
+        urlList_shuffled = shufflePlaylistWithRandomValues(urlList);
         Play();
       }
       
@@ -51,12 +61,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   }
 
   void Play(){
-    int count_for_show=count+1;
-    int number_of_music=PlayList_shuffled.length;
+    int count_for_show=music_count+1;
+    int number_of_music=urlList_shuffled.length;
     setState(() {
-      title="▶再生中 ($count_for_show/$number_of_music)";
+      title="▶$sheet_name：$count_for_show/$number_of_music";
     });
-    _controller.loadVideoById(videoId: PlayList_shuffled[count][0],endSeconds: PlayList_shuffled[count][1]);  
+    _controller.loadVideoById(videoId: urlList_shuffled[music_count][0],endSeconds: urlList_shuffled[music_count][1]);  
   }
 
   @override
@@ -74,7 +84,14 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
     _controller.listen(_listener);
 
-    WidgetsBinding.instance.addPostFrameCallback((_){PlayList_shuffled = shufflePlaylistWithRandomValues(PlayList);Play();});
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_){
+        sheet_name=PlayList.keys.elementAt(sheet_count);
+        urlList = PlayList[sheet_name]!;
+        urlList_shuffled = shufflePlaylistWithRandomValues(urlList);
+        Play();
+      }
+    );
   }
 
   @override
@@ -85,8 +102,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final arguments = ModalRoute.of(context)?.settings.arguments as List<List<dynamic>>?;
-    PlayList=arguments??[];
+    final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, List<List<dynamic>>>?;
+    PlayList=arguments??{};
     return Scaffold(
       appBar: AppBar(
         backgroundColor: MyColor.player,

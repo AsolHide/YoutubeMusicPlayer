@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
@@ -69,19 +70,11 @@ class InitPageState extends State<InitPage> {
 
   String? fileName="未選択";
   Map<String, List<List<dynamic>>> excelData = {};
-  String sheetname="";
-  List<List<dynamic>>? urlList=[];
-
-
-  @override
-  void initState() {
-    super.initState();
-
-  }
+  int sheetnum=0;
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     Future<void> pickFile() async {
 
@@ -94,7 +87,6 @@ class InitPageState extends State<InitPage> {
         allowedExtensions: ['xlsx'],
         allowMultiple: false,
         withData: true,
-        
       );
 
       if (result!=null){
@@ -119,8 +111,8 @@ class InitPageState extends State<InitPage> {
 
                 for (int colIndex = 0; colIndex < row.length; colIndex++) {
                   var cell = row[colIndex];
-                  if (cell != null) {
-                    var value = cell.value;
+                  if (cell?.value != null) {
+                    var value = cell?.value;
                     if (colIndex==0){
                       convertedRow.add(value.toString());
                     }else{
@@ -131,16 +123,18 @@ class InitPageState extends State<InitPage> {
                     convertedRow.add("");  // セルがnullの場合は空文字列を追加
                   }
                 }
-                rows.add(convertedRow);
+                bool isEmptyRow = (convertedRow[0]=="" || convertedRow[1]=="" || convertedRow[2]=="");
+                if (!isEmptyRow) {
+                  rows.add(convertedRow);
+                }
               }
-
+              debugPrint("$rows");
               tempData[table] = rows; // シート名をキーにしてデータを保存
             }
 
             setState(() {
               excelData = tempData; // ファイル内容を保存
-              sheetname=tempData.keys.elementAt(0);
-              urlList=tempData[sheetname];
+              sheetnum = tempData.keys.length;
               _playbutton=true;
             });
           }catch (e, stackTrace) {
@@ -188,10 +182,10 @@ class InitPageState extends State<InitPage> {
               child: Center(
                 child: _isLoad
                   ?CircularProgressIndicator()
-                  :Text("＜読み込まれたリスト＞\n$fileName",textAlign: TextAlign.center,),
+                  :Text("＜読み込まれたリスト＞$fileName\n<リスト数>$sheetnum",textAlign: TextAlign.center,),
                 ),
               ),
-            Mywidget.NormalBUtton(size.width,"再生",(){Navigator.pushNamed(context, '/Player',arguments: urlList);},_playbutton),
+            Mywidget.NormalBUtton(size.width,"再生",(){Navigator.pushNamed(context, '/Player',arguments: excelData);},_playbutton),
           ],
         ),
       ),
@@ -213,7 +207,7 @@ class MenuState extends State<Menu> {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
@@ -251,7 +245,7 @@ class SettingState extends State<Setting> {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
